@@ -143,7 +143,7 @@ uint32_t pwm_init(pwm_t pwm, pwm_mode_t mode, uint32_t freq, uint16_t res)
     }
 
     /* number of hardware ticks required, at maximum it can be APB clock */
-    uint32_t hw_ticks = MIN(freq * hw_res, clk_freq);
+    uint32_t hw_ticks = MIN((uint64_t)freq * hw_res, clk_freq);
 
     /*
      * if the number of required ticks is less than the minimum supported by
@@ -283,6 +283,8 @@ void pwm_poweron(pwm_t pwm)
         /* restore used parameters */
         ledc_hal_set_duty_int_part(&_DEV.hw, _DEV.ch[i].ch, _DEV.ch[i].duty);
         ledc_hal_set_hpoint(&_DEV.hw, _DEV.ch[i].ch, _DEV.ch[i].hpoint);
+        /* unused channels output the idle level, which has to be LOW */
+        ledc_hal_set_idle_level(&_DEV.hw, _DEV.ch[i].ch, 0);
         ledc_hal_set_sig_out_en(&_DEV.hw, _DEV.ch[i].ch, _DEV.ch[i].used);
         ledc_hal_ls_channel_update(&_DEV.hw, _DEV.ch[i].ch);
         ledc_hal_set_duty_start(&_DEV.hw, _DEV.ch[i].ch, _DEV.ch[i].used);

@@ -28,13 +28,21 @@ DETAILED_OUTPUT ?= 0
 
 include $(RIOTBASE)/Makefile.include
 
+# We only need 1 thread (+ the Idle thread on some platforms) and we really
+# want this app working on as many boards as possible. ESP32x SoCs use an
+# extra thread for esp_timer and USB stacks (stdio via USB) use an extra thread.
 ifneq ($(CPU),esp32)
-  # We only need 1 thread (+ the Idle thread on some platforms) and we really
-  # want this app working on as many boards as possible
-  CFLAGS += -DMAXTHREADS=2
+  ifeq (,$(filter usbus tinyusb_device,$(USEMODULE)))
+    CFLAGS += -DMAXTHREADS=2
+  else
+    CFLAGS += -DMAXTHREADS=3
+  endif
 else
-  # ESP32x SoCs uses an extra thread for esp_timer
-  CFLAGS += -DMAXTHREADS=3
+  ifeq (,$(filter usbus tinyusb_device,$(USEMODULE)))
+    CFLAGS += -DMAXTHREADS=3
+  else
+    CFLAGS += -DMAXTHREADS=4
+  endif
 endif
 
 ifeq (esp32-wemos-d1-r32,$(BOARD))

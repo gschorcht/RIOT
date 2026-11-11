@@ -31,6 +31,10 @@ config CPU_MODEL_ESP32_D0WD
     bool
     select CPU_FAM_ESP32
 
+config CPU_MODEL_ESP32_PICO_D4
+    bool
+    select CPU_FAM_ESP32
+
 config CPU_MODEL
     depends on CPU_FAM_ESP32
     default "esp32-wroom_32" if CPU_MODEL_ESP32_WROOM_32
@@ -38,6 +42,7 @@ config CPU_MODEL
     default "esp32-wrover" if CPU_MODEL_ESP32_WROVER_B
     default "esp32-wrover" if CPU_MODEL_ESP32_WROVER_E
     default "esp32-d0wd" if CPU_MODEL_ESP32_D0WD
+    default "esp32-pico_d4" if CPU_MODEL_ESP32_PICO_D4
 
 if CPU_FAM_ESP32
 

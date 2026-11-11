@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 Gunar Schorcht
+# SPDX-License-Identifier: LGPL-2.1-only
+
+config BOARD
+    default "m5stack-atom-matrix-esp32" if BOARD_M5STACK_ATOM_MATRIX_ESP32
+
+config BOARD_M5STACK_ATOM_MATRIX_ESP32
+    bool
+    default y
+    select BOARD_COMMON_ESP32
+    select CPU_MODEL_ESP32_PICO_D4
+
+source "$(RIOTBOARD)/common/esp32/Kconfig"

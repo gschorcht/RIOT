@@ -1,0 +1,6 @@
+# ESP32-PICO-D4 has 4 MB embedded flash
+FLASH_SIZE ?= 4
+
+# The USB-to-UART bridge of the board does not work reliably at higher
+# baudrates when flashing
+PROGRAMMER_SPEED ?= 115200

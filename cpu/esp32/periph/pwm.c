@@ -247,8 +247,10 @@ void pwm_set(pwm_t pwm, uint8_t channel, uint16_t value)
     ledc_hal_set_duty_int_part(&_DEV.hw, ch, _DEV.ch[channel].duty);
     ledc_hal_set_hpoint(&_DEV.hw, ch, _DEV.ch[channel].hpoint);
     ledc_hal_set_sig_out_en(&_DEV.hw, ch, true);
-    ledc_hal_ls_channel_update(&_DEV.hw, ch);
+    /* duty_start has to be set before the update of the channel parameters,
+     * otherwise the new duty is not applied before the next update */
     ledc_hal_set_duty_start(&_DEV.hw, ch, true);
+    ledc_hal_ls_channel_update(&_DEV.hw, ch);
     critical_exit();
 }
 
@@ -286,8 +288,10 @@ void pwm_poweron(pwm_t pwm)
         /* unused channels output the idle level, which has to be LOW */
         ledc_hal_set_idle_level(&_DEV.hw, _DEV.ch[i].ch, 0);
         ledc_hal_set_sig_out_en(&_DEV.hw, _DEV.ch[i].ch, _DEV.ch[i].used);
+        /* apply the restored duty also for unused channels so that no stale
+         * duty of a previous initialization remains active */
+        ledc_hal_set_duty_start(&_DEV.hw, _DEV.ch[i].ch, true);
         ledc_hal_ls_channel_update(&_DEV.hw, _DEV.ch[i].ch);
-        ledc_hal_set_duty_start(&_DEV.hw, _DEV.ch[i].ch, _DEV.ch[i].used);
     }
     _DEV.enabled = true;
     critical_exit();

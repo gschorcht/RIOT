@@ -231,7 +231,10 @@ void pwm_set(pwm_t pwm, uint8_t channel, uint16_t value)
             _DEV.ch[channel].hpoint = 0;
             break;
         case PWM_RIGHT:
-            _DEV.ch[channel].hpoint = _DEV.hw_res - 1 - _DEV.ch[channel].duty;
+            /* avoid underflow for a duty cycle of 100 % */
+            _DEV.ch[channel].hpoint = (_DEV.ch[channel].duty < _DEV.hw_res)
+                                    ? _DEV.hw_res - 1 - _DEV.ch[channel].duty
+                                    : 0;
             break;
         case PWM_CENTER:
             _DEV.ch[channel].hpoint = (_DEV.hw_res - _DEV.ch[channel].duty) >> 1;
